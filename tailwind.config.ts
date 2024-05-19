@@ -18,6 +18,14 @@ const config: Config = {
 				},
 				orange: { 450: "#FE8A00" },
 				neutral: { 450: "#CFCFCF" },
+				gray: { 850: "#D9D9D90D" },
+			},
+			fontSize: {
+				"2xs": ["12px", "14.63px"],
+				"2lg": ["21.52px", "26.23px"],
+			},
+			spacing: {
+				85: "22rem",
 			},
 		},
 	},
