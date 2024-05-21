@@ -1,7 +1,5 @@
-"use client";
 import { api } from "@/data/api";
 import { parseDate } from "@/util/parse-date";
-import { Fragment } from "react";
 
 interface HistoryHoursWorkedListProps {
 	userId: string;
@@ -10,7 +8,9 @@ interface HistoryHoursWorkedListProps {
 export default async function HistoryHoursWorkedList({
 	userId,
 }: HistoryHoursWorkedListProps) {
-	const response = await api(`/timecards/${userId}`);
+	const response = await api(`/timecards/${userId}`, {
+		method: "GET",
+	});
 
 	const timeCardsData: { timeCards: TimeCards[] } = await response.json();
 	const { timeCards } = timeCardsData;
@@ -29,7 +29,7 @@ export default async function HistoryHoursWorkedList({
 				timeCards.map((timeCard) => (
 					<div
 						key={timeCard.id}
-						className="flex items-center justify-between rounded bg-gray-850 py-3 pr-3.5 pl-3 text-xs"
+						className="flex max-h-[60px] items-center justify-between overflow-y-auto rounded bg-gray-850 py-3 pr-3.5 pl-3 text-xs"
 					>
 						<span className="font-medium text-neutral-450">
 							{parseDate(timeCard.startDayWorked)}

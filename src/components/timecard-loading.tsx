@@ -1,8 +1,4 @@
-import { Suspense } from "react";
-
-import { Skeleton } from "@/components/skeleton";
-
-export default function SearchLoading() {
+export default function TimeCardLoading() {
 	return (
 		<div className="mt-20 flex flex-col items-center">
 			<div className="flex w-full max-w-85 items-center justify-center">
