@@ -1,7 +1,6 @@
 "use client";
 
 import { useCycleContext } from "@/app/contexts/cycle-context";
-import { useUserContext } from "@/app/contexts/user-context";
 import { amountHoursMinutes } from "@/util/amount-hours-minutes";
 import { differenceInSeconds } from "date-fns";
 import { type ReactNode, Suspense, useEffect } from "react";
@@ -9,17 +8,14 @@ import ActionsTimecard from "./actions-timecard";
 import { Skeleton } from "./skeleton";
 
 interface TimeCardContentProps {
-	fetchUser: User;
-	fetchCurrentTimeWork?: CurrentTimeWork;
+	user: User;
 	children: ReactNode;
 }
 
 export default function TimeCardContent({
 	children,
-	fetchUser,
-	fetchCurrentTimeWork,
+	user,
 }: TimeCardContentProps) {
-	const { updateUserCurrentTimeWork, updateUserData } = useUserContext();
 	const {
 		startDate,
 		endDate,
@@ -28,7 +24,7 @@ export default function TimeCardContent({
 		amountSecondsPassed,
 	} = useCycleContext();
 
-	const hasActiveCycle = !activeCycle && !!startDate && !!endDate;
+	const hasStartAndEndDate = !!startDate && !!endDate;
 
 	const currentSeconds = startDate ? amountSecondsPassed : 0;
 
@@ -53,36 +49,25 @@ export default function TimeCardContent({
 		};
 	}, [activeCycle, startDate, setSecondsPassed]);
 
-	useEffect(() => {
-		updateUserData(fetchUser);
-		if (fetchCurrentTimeWork) {
-			updateUserCurrentTimeWork(fetchCurrentTimeWork);
-		}
-	}, []);
-
 	return (
 		<div className="mt-20 flex flex-col items-center">
 			<div className="w-full max-w-85 px-4 md:px-0">
 				<div className="flex items-start justify-between">
 					<p className="font-bold text-neutral-100 text-xs">Relógio ponto</p>
 					<div className="flex flex-col items-end">
-						<p className="font-bold text-neutral-100 text-xs">
-							# {fetchUser.ref}
-						</p>
-						<p className="font-light text-neutral-450 text-xs">
-							{fetchUser.name}
-						</p>
+						<p className="font-bold text-neutral-100 text-xs"># {user.ref}</p>
+						<p className="font-light text-neutral-450 text-xs">{user.name}</p>
 					</div>
 				</div>
 
 				<div className="my-6">
 					<div className="font-bold text-3xl">
-						{hasActiveCycle && amountHoursMinutes({ startDate, endDate })}
-						{!hasActiveCycle && `${hours}h ${minutes}m`}
+						{!activeCycle && amountHoursMinutes({ startDate, endDate })}
+						{activeCycle && `${hours}h ${minutes}m`}
 					</div>
 					<p className="font-bold text-neutral-100 text-xs">Horas de hoje</p>
 				</div>
-				<ActionsTimecard userId={fetchUser.id} />
+				<ActionsTimecard userId={user.id} />
 
 				<div className="mt-6">
 					<p className="font-bold text-neutral-100 text-xs">Dias anteriores</p>

@@ -8,12 +8,11 @@ interface ActionsTimecardProps {
 }
 
 export default function ActionsTimecard({ userId }: ActionsTimecardProps) {
-	const { activeCycle, startDate, startCycle, finishCycle, hasSomeDays } =
+	const { activeCycle, startDate, startCycle, finishCycle, endDate } =
 		useCycleContext();
 
-	const today = new Date();
-
-	const cycleFinished = hasSomeDays && startDate?.getDay() === today.getDay();
+	const hasStartDate = !!startDate;
+	const hasEndDate = !!endDate;
 
 	const handleStartCurrentTimeWork = () => {
 		api(`/timecards/${userId}/create`, {
@@ -27,6 +26,7 @@ export default function ActionsTimecard({ userId }: ActionsTimecardProps) {
 			.catch((error) => {
 				console.log(error);
 			});
+		console.log("Toast iniciou ciclo");
 	};
 
 	const handleFinishCurrentTimeWork = async () => {
@@ -41,27 +41,33 @@ export default function ActionsTimecard({ userId }: ActionsTimecardProps) {
 			.catch((error) => {
 				console.log(error);
 			});
+		console.log("Toast encerrou ciclo");
 	};
 
 	return (
 		<>
-			{cycleFinished && (
+			{!activeCycle && hasEndDate ? (
 				<p className="font-medium text-2xs text-zinc-300">
 					Parabéns, você finalizou o seu horário. Nos vemos amanhã ;)
 				</p>
+			) : (
+				!hasStartDate && (
+					<button
+						type="button"
+						onClick={handleStartCurrentTimeWork}
+						className="w-full rounded bg-orange-450 py-3 font-bold text-blue-1200 transition-colors duration-300 ease-in-out hover:bg-orange-500"
+					>
+						Hora de entrada
+					</button>
+				)
 			)}
-
-			{!cycleFinished && (
+			{activeCycle && (
 				<button
 					type="button"
-					onClick={
-						activeCycle
-							? handleFinishCurrentTimeWork
-							: handleStartCurrentTimeWork
-					}
+					onClick={handleFinishCurrentTimeWork}
 					className="w-full rounded bg-orange-450 py-3 font-bold text-blue-1200 transition-colors duration-300 ease-in-out hover:bg-orange-500"
 				>
-					{activeCycle ? "Hora de saída" : "Hora de entrada"}
+					Hora de saída
 				</button>
 			)}
 		</>

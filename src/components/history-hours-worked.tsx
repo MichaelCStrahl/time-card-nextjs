@@ -10,6 +10,9 @@ export default async function HistoryHoursWorkedList({
 }: HistoryHoursWorkedListProps) {
 	const response = await api(`/timecards/${userId}`, {
 		method: "GET",
+		next: {
+			revalidate: 60 * 60, // 1 hour
+		},
 	});
 
 	const timeCardsData: { timeCards: TimeCards[] } = await response.json();

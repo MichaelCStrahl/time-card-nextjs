@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 
 interface UserDataProps {
 	user: User;
-	currentTimeWork?: CurrentTimeWork;
 }
 
 interface TimCardProps {
@@ -19,21 +18,21 @@ export default async function TimeCard({ params }: TimCardProps) {
 	const response = await api(`/users/${userRef}`, {
 		method: "GET",
 		next: {
-			revalidate: 0,
+			revalidate: 60 * 60, // 1 hour
 		},
 	});
 
 	const userData: UserDataProps = await response.json();
 
-	const { user, currentTimeWork } = userData;
+	const { user } = userData;
 
 	if (!response.ok) {
 		redirect("/");
 	}
 
 	return (
-		<CycleProvider>
-			<TimeCardContent fetchUser={user} fetchCurrentTimeWork={currentTimeWork}>
+		<CycleProvider userId={user.id}>
+			<TimeCardContent user={user}>
 				<HistoryHoursWorkedList userId={user.id} />
 			</TimeCardContent>
 		</CycleProvider>
